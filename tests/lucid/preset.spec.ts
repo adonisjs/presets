@@ -12,7 +12,7 @@ import { test } from '@japa/runner'
 import { presetLucid } from '../../lucid/main.js'
 import { createEnvFile, createSetupFiles, createConfigureCommand } from '../helpers.js'
 
-test.group('Configure Lucid', (group) => {
+test.group('Preset | Lucid', (group) => {
   group.each.disableTimeout()
 
   test('configure postgres dialect', async ({ fs, assert }) => {

@@ -7,6 +7,7 @@
  * file that was distributed with this source code.
  */
 
+import dedent from 'dedent'
 import { FileSystem } from '@japa/file-system'
 import { AceFactory } from '@adonisjs/core/factories'
 import Configure from '@adonisjs/core/commands/configure'
@@ -28,6 +29,20 @@ export async function createSetupFiles(fs: FileSystem) {
 export async function createEnvFile(fs: FileSystem) {
   await fs.create('.env', '')
   await fs.create('start/env.ts', 'export default Env.create(import.meta.url, {})')
+}
+
+/**
+ * Creates "start/kernel.ts" file
+ */
+export async function createKernelFile(fs: FileSystem) {
+  await fs.create('start/kernel.ts', dedent`
+  server.use([])
+
+  router.use([])
+
+  export const middleware = router.named({
+  })
+  `)
 }
 
 /**
