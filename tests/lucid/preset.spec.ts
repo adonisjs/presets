@@ -9,8 +9,9 @@
 
 import dedent from 'dedent'
 import { test } from '@japa/runner'
-import { presetLucid } from '../../lucid/main.js'
-import { createEnvFile, createSetupFiles, createConfigureCommand } from '../helpers.js'
+import { cliui } from '@poppinss/cliui'
+import { presetLucid } from '../../src/lucid/main.js'
+import { createEnvFile, createSetupFiles, createCodeMods, createApp } from '../helpers.js'
 
 test.group('Preset | Lucid', (group) => {
   group.each.disableTimeout()
@@ -18,11 +19,16 @@ test.group('Preset | Lucid', (group) => {
   test('configure postgres dialect', async ({ fs, assert }) => {
     await createSetupFiles(fs)
     await createEnvFile(fs)
-    const configureCommand = await createConfigureCommand(fs)
 
-    await presetLucid(configureCommand, { dialect: 'postgres', installPackages: false })
+    const logger = cliui({ mode: 'normal' }).logger
+    const app = await createApp(fs)
+    const codemods = await createCodeMods(fs, logger, app)
 
-    await assert.fileEquals('config/database.ts', dedent`import env from '#start/env'
+    await presetLucid(codemods, app, { dialect: 'postgres', installPackages: false })
+
+    await assert.fileEquals(
+      'config/database.ts',
+      dedent`import env from '#start/env'
     import { defineConfig } from '@adonisjs/lucid'
 
     const dbConfig = defineConfig({
@@ -45,7 +51,8 @@ test.group('Preset | Lucid', (group) => {
       },
     })
 
-    export default dbConfig`)
+    export default dbConfig`
+    )
 
     await assert.fileContains('.env', [
       'DB_HOST',
@@ -67,11 +74,16 @@ test.group('Preset | Lucid', (group) => {
   test('configure mysql dialect', async ({ fs, assert }) => {
     await createSetupFiles(fs)
     await createEnvFile(fs)
-    const configureCommand = await createConfigureCommand(fs)
 
-    await presetLucid(configureCommand, { dialect: 'mysql', installPackages: false })
+    const logger = cliui({ mode: 'normal' }).logger
+    const app = await createApp(fs)
+    const codemods = await createCodeMods(fs, logger, app)
 
-    await assert.fileEquals('config/database.ts', dedent`import env from '#start/env'
+    await presetLucid(codemods, app, { dialect: 'mysql', installPackages: false })
+
+    await assert.fileEquals(
+      'config/database.ts',
+      dedent`import env from '#start/env'
     import { defineConfig } from '@adonisjs/lucid'
 
     const dbConfig = defineConfig({
@@ -94,7 +106,8 @@ test.group('Preset | Lucid', (group) => {
       },
     })
 
-    export default dbConfig`)
+    export default dbConfig`
+    )
 
     await assert.fileContains('.env', [
       'DB_HOST',
@@ -116,11 +129,16 @@ test.group('Preset | Lucid', (group) => {
   test('configure mssql dialect', async ({ fs, assert }) => {
     await createSetupFiles(fs)
     await createEnvFile(fs)
-    const configureCommand = await createConfigureCommand(fs)
 
-    await presetLucid(configureCommand, { dialect: 'mssql', installPackages: false })
+    const logger = cliui({ mode: 'normal' }).logger
+    const app = await createApp(fs)
+    const codemods = await createCodeMods(fs, logger, app)
 
-    await assert.fileEquals('config/database.ts', dedent`import env from '#start/env'
+    await presetLucid(codemods, app, { dialect: 'mssql', installPackages: false })
+
+    await assert.fileEquals(
+      'config/database.ts',
+      dedent`import env from '#start/env'
     import { defineConfig } from '@adonisjs/lucid'
 
     const dbConfig = defineConfig({
@@ -143,7 +161,8 @@ test.group('Preset | Lucid', (group) => {
       },
     })
 
-    export default dbConfig`)
+    export default dbConfig`
+    )
 
     await assert.fileContains('.env', [
       'DB_HOST',
@@ -165,11 +184,16 @@ test.group('Preset | Lucid', (group) => {
   test('configure sqlite dialect', async ({ fs, assert }) => {
     await createSetupFiles(fs)
     await createEnvFile(fs)
-    const configureCommand = await createConfigureCommand(fs)
 
-    await presetLucid(configureCommand, { dialect: 'sqlite', installPackages: false })
+    const logger = cliui({ mode: 'normal' }).logger
+    const app = await createApp(fs)
+    const codemods = await createCodeMods(fs, logger, app)
 
-    await assert.fileEquals('config/database.ts', dedent`import app from '@adonisjs/core/services/app'
+    await presetLucid(codemods, app, { dialect: 'sqlite', installPackages: false })
+
+    await assert.fileEquals(
+      'config/database.ts',
+      dedent`import app from '@adonisjs/core/services/app'
     import { defineConfig } from '@adonisjs/lucid'
 
     const dbConfig = defineConfig({
@@ -189,7 +213,8 @@ test.group('Preset | Lucid', (group) => {
       },
     })
 
-    export default dbConfig`)
+    export default dbConfig`
+    )
 
     await assert.dirExists('tmp')
     await assert.fileEquals('.env', '')
@@ -199,9 +224,12 @@ test.group('Preset | Lucid', (group) => {
   test('install packages', async ({ fs, assert }) => {
     await createSetupFiles(fs)
     await createEnvFile(fs)
-    const configureCommand = await createConfigureCommand(fs)
 
-    await presetLucid(configureCommand, { dialect: 'postgres', installPackages: true })
+    const logger = cliui({ mode: 'normal' }).logger
+    const app = await createApp(fs)
+    const codemods = await createCodeMods(fs, logger, app)
+
+    await presetLucid(codemods, app, { dialect: 'postgres', installPackages: true })
     await assert.dirExists('node_modules/pg')
     await assert.dirExists('node_modules/luxon')
   })

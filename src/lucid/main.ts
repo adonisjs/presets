@@ -9,7 +9,10 @@
 
 import { mkdir } from 'node:fs/promises'
 import { joinToURL } from '@poppinss/utils'
-import type Configure from '@adonisjs/core/commands/configure'
+import type { Application } from '@adonisjs/core/app'
+import type { Codemods } from '@adonisjs/core/ace/codemods'
+
+const STUBS_ROOT = joinToURL(import.meta.url, './stubs')
 
 /**
  * Collection of dialects that can be configured
@@ -93,15 +96,13 @@ export const DIALECTS: {
  * - Installs required packages if(options.installPackages === true)
  */
 export async function presetLucid(
-  command: Configure,
+  codemods: Codemods,
+  app: Application<any>,
   options: {
     dialect: keyof typeof DIALECTS
     installPackages: boolean
   }
 ) {
-  command.stubsRoot = joinToURL(import.meta.url, 'stubs')
-
-  const codemods = await command.createCodemods()
   const { pkg, envVars, envValidations } = DIALECTS[options.dialect]
   const packagesToInstall = [
     { name: pkg, isDevDependency: false },
@@ -112,14 +113,14 @@ export async function presetLucid(
   /**
    * Publish config file
    */
-  await command.publishStub('config.stub', { dialect: options.dialect })
+  await codemods.makeUsingStub(STUBS_ROOT, 'config.stub', { dialect: options.dialect })
 
   /**
    * Create the "tmp" directory when using sqlite
    */
   if (options.dialect === 'sqlite') {
     try {
-      await mkdir(command.app.tmpPath(), { recursive: true })
+      await mkdir(app.tmpPath(), { recursive: true })
     } catch {}
   }
 
@@ -154,8 +155,8 @@ export async function presetLucid(
    * Install packages or share instructions to install them
    */
   if (options.installPackages) {
-    await command.installPackages(packagesToInstall)
+    await codemods.installPackages(packagesToInstall)
   } else {
-    command.listPackagesToInstall(packagesToInstall)
+    codemods.listPackagesToInstall(packagesToInstall)
   }
 }

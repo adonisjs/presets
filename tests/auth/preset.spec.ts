@@ -9,8 +9,9 @@
 
 import dedent from 'dedent'
 import { test } from '@japa/runner'
-import { createKernelFile, createSetupFiles, createConfigureCommand } from '../helpers.js'
-import { presetAuth } from '../../auth/main.js'
+import { cliui } from '@poppinss/cliui'
+import { presetAuth } from '../../src/auth/main.js'
+import { createKernelFile, createSetupFiles, createCodeMods } from '../helpers.js'
 
 test.group('Preset | Auth', (group) => {
   group.each.disableTimeout()
@@ -18,9 +19,11 @@ test.group('Preset | Auth', (group) => {
   test('register provider and middleware', async ({ fs, assert }) => {
     await createSetupFiles(fs)
     await createKernelFile(fs)
-    const configureCommand = await createConfigureCommand(fs)
 
-    await presetAuth(configureCommand, { guard: 'session', userProvider: 'lucid' })
+    const logger = cliui({ mode: 'normal' }).logger
+    const codemods = await createCodeMods(fs, logger)
+
+    await presetAuth(codemods, { guard: 'session', userProvider: 'lucid' })
     await assert.fileContains('adonisrc.ts', ['@adonisjs/auth/auth_provider'])
     await assert.fileContains('start/kernel.ts', [
       `() => import('@adonisjs/auth/initialize_auth_middleware')`,
@@ -32,10 +35,14 @@ test.group('Preset | Auth', (group) => {
   test('create config file with session guard and lucid provider', async ({ fs, assert }) => {
     await createSetupFiles(fs)
     await createKernelFile(fs)
-    const configureCommand = await createConfigureCommand(fs)
 
-    await presetAuth(configureCommand, { guard: 'session', userProvider: 'lucid' })
-    await assert.fileEquals('config/auth.ts', dedent`
+    const logger = cliui({ mode: 'normal' }).logger
+    const codemods = await createCodeMods(fs, logger)
+
+    await presetAuth(codemods, { guard: 'session', userProvider: 'lucid' })
+    await assert.fileEquals(
+      'config/auth.ts',
+      dedent`
     import { defineConfig, providers } from '@adonisjs/auth'
     import { sessionGuard } from '@adonisjs/auth/session'
     import { InferAuthEvents, Authenticators } from '@adonisjs/auth/types'
@@ -64,16 +71,21 @@ test.group('Preset | Auth', (group) => {
     declare module '@adonisjs/core/types' {
       interface EventsList extends InferAuthEvents<Authenticators> {}
     }
-    `)
+    `
+    )
   })
 
   test('create config file with session guard and db provider', async ({ fs, assert }) => {
     await createSetupFiles(fs)
     await createKernelFile(fs)
-    const configureCommand = await createConfigureCommand(fs)
 
-    await presetAuth(configureCommand, { guard: 'session', userProvider: 'database' })
-    await assert.fileEquals('config/auth.ts', dedent`
+    const logger = cliui({ mode: 'normal' }).logger
+    const codemods = await createCodeMods(fs, logger)
+
+    await presetAuth(codemods, { guard: 'session', userProvider: 'database' })
+    await assert.fileEquals(
+      'config/auth.ts',
+      dedent`
     import { defineConfig, providers } from '@adonisjs/auth'
     import { sessionGuard } from '@adonisjs/auth/session'
     import { InferAuthEvents, Authenticators } from '@adonisjs/auth/types'
@@ -104,6 +116,7 @@ test.group('Preset | Auth', (group) => {
     declare module '@adonisjs/core/types' {
       interface EventsList extends InferAuthEvents<Authenticators> {}
     }
-    `)
+    `
+    )
   })
 })

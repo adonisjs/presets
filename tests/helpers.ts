@@ -9,16 +9,25 @@
 
 import dedent from 'dedent'
 import { FileSystem } from '@japa/file-system'
-import { AceFactory } from '@adonisjs/core/factories'
-import Configure from '@adonisjs/core/commands/configure'
+import { Codemods } from '@adonisjs/core/ace/codemods'
+import { UIPrimitives } from '@adonisjs/core/types/ace'
+import { AppFactory } from '@adonisjs/core/factories/app'
+import { ApplicationService } from '@adonisjs/core/types'
 
 /**
  * Creates the setup files for codemods to work
  */
 export async function createSetupFiles(fs: FileSystem) {
-  await fs.createJson('tsconfig.json', {})
+  await fs.createJson('tsconfig.json', {
+    compilerOptions: {
+      target: 'ESNext',
+      module: 'NodeNext',
+      lib: ['ESNext'],
+    },
+  })
   await fs.createJson('package.json', {
     name: 'sample-app',
+    type: 'module',
   })
   await fs.create('adonisrc.ts', `export default defineConfig({})`)
 }
@@ -35,22 +44,37 @@ export async function createEnvFile(fs: FileSystem) {
  * Creates "start/kernel.ts" file
  */
 export async function createKernelFile(fs: FileSystem) {
-  await fs.create('start/kernel.ts', dedent`
+  await fs.create(
+    'start/kernel.ts',
+    dedent`
   server.use([])
 
   router.use([])
 
   export const middleware = router.named({
   })
-  `)
+  `
+  )
 }
 
 /**
- * Creates configure command that can be used to execute presets
+ * Creates application service
  */
-export async function createConfigureCommand(fs: FileSystem) {
-  const ace = await new AceFactory().make(fs.baseUrl, {
-    importer: () => {},
-  })
-  return ace.create(Configure, ['./'])
+export async function createApp(fs: FileSystem) {
+  const app = new AppFactory().create(fs.baseUrl, () => {})
+  app.rcContents({})
+  await app.init()
+
+  return app as ApplicationService
+}
+
+/**
+ * Creates codemods instance
+ */
+export async function createCodeMods(
+  fs: FileSystem,
+  logger: UIPrimitives['logger'],
+  app?: ApplicationService
+) {
+  return new Codemods(app || (await createApp(fs)), logger)
 }

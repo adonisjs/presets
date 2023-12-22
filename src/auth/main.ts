@@ -8,28 +8,27 @@
  */
 
 import { joinToURL } from '@poppinss/utils'
-import type Configure from '@adonisjs/core/commands/configure'
+import type { Codemods } from '@adonisjs/core/ace/codemods'
+
+const STUBS_ROOT = joinToURL(import.meta.url, './stubs')
 
 /**
  * Configures the "@adonisjs/auth" package with one of the
  * bundled guards and user providers
  */
 export async function presetAuth(
-  command: Configure,
+  codemods: Codemods,
   options: {
-    guard: 'session',
-    userProvider: 'lucid' | 'database',
+    guard: 'session'
+    userProvider: 'lucid' | 'database'
   }
 ) {
-  command.stubsRoot = joinToURL(import.meta.url, 'stubs')
-
-  const codemods = await command.createCodemods()
   const configStub = `${options.guard}_with_${options.userProvider}.stub`
 
   /**
    * Publish config file
    */
-  await command.publishStub(configStub)
+  await codemods.makeUsingStub(STUBS_ROOT, configStub, {})
 
   /**
    * Register provider to the rcfile
@@ -44,7 +43,7 @@ export async function presetAuth(
   await codemods.registerMiddleware('router', [
     {
       path: '@adonisjs/auth/initialize_auth_middleware',
-    }
+    },
   ])
   await codemods.registerMiddleware('named', [
     {
@@ -54,6 +53,6 @@ export async function presetAuth(
     {
       name: 'guest',
       path: '#middleware/guest_middleware',
-    }
+    },
   ])
 }
