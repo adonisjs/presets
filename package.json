@@ -14,7 +14,7 @@
   },
   "scripts": {
     "pretest": "npm run lint",
-    "test": "c8 npm run vscode:test",
+    "test": "c8 npm run quick:test",
     "lint": "eslint . --ext=.ts",
     "clean": "del-cli build",
     "typecheck": "tsc --noEmit",
