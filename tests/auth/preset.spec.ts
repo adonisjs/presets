@@ -9,9 +9,9 @@
 
 import dedent from 'dedent'
 import { test } from '@japa/runner'
-import { cliui } from '@poppinss/cliui'
+import { Kernel } from '@adonisjs/core/ace'
 import { presetAuth } from '../../src/auth/main.js'
-import { createKernelFile, createSetupFiles, createCodeMods } from '../helpers.js'
+import { createKernelFile, createSetupFiles, createCodeMods, createApp } from '../helpers.js'
 
 test.group('Preset | Auth', (group) => {
   group.each.disableTimeout()
@@ -20,8 +20,9 @@ test.group('Preset | Auth', (group) => {
     await createSetupFiles(fs)
     await createKernelFile(fs)
 
-    const logger = cliui({ mode: 'normal' }).logger
-    const codemods = await createCodeMods(fs, logger)
+    const app = await createApp(fs)
+    const logger = new Kernel(app).ui.logger
+    const codemods = await createCodeMods(fs, logger, app)
 
     await presetAuth(codemods, { guard: 'session', userProvider: 'lucid' })
     await assert.fileContains('adonisrc.ts', ['@adonisjs/auth/auth_provider'])
@@ -36,8 +37,9 @@ test.group('Preset | Auth', (group) => {
     await createSetupFiles(fs)
     await createKernelFile(fs)
 
-    const logger = cliui({ mode: 'normal' }).logger
-    const codemods = await createCodeMods(fs, logger)
+    const app = await createApp(fs)
+    const logger = new Kernel(app).ui.logger
+    const codemods = await createCodeMods(fs, logger, app)
 
     await presetAuth(codemods, { guard: 'session', userProvider: 'lucid' })
     await assert.fileEquals(
@@ -79,8 +81,9 @@ test.group('Preset | Auth', (group) => {
     await createSetupFiles(fs)
     await createKernelFile(fs)
 
-    const logger = cliui({ mode: 'normal' }).logger
-    const codemods = await createCodeMods(fs, logger)
+    const app = await createApp(fs)
+    const logger = new Kernel(app).ui.logger
+    const codemods = await createCodeMods(fs, logger, app)
 
     await presetAuth(codemods, { guard: 'session', userProvider: 'database' })
     await assert.fileEquals(

@@ -9,7 +9,7 @@
 
 import dedent from 'dedent'
 import { test } from '@japa/runner'
-import { cliui } from '@poppinss/cliui'
+import { Kernel } from '@adonisjs/core/ace'
 import { presetLucid } from '../../src/lucid/main.js'
 import { createEnvFile, createSetupFiles, createCodeMods, createApp } from '../helpers.js'
 
@@ -20,8 +20,8 @@ test.group('Preset | Lucid', (group) => {
     await createSetupFiles(fs)
     await createEnvFile(fs)
 
-    const logger = cliui({ mode: 'normal' }).logger
     const app = await createApp(fs)
+    const logger = new Kernel(app).ui.logger
     const codemods = await createCodeMods(fs, logger, app)
 
     await presetLucid(codemods, app, { dialect: 'postgres', installPackages: false })
@@ -75,8 +75,8 @@ test.group('Preset | Lucid', (group) => {
     await createSetupFiles(fs)
     await createEnvFile(fs)
 
-    const logger = cliui({ mode: 'normal' }).logger
     const app = await createApp(fs)
+    const logger = new Kernel(app).ui.logger
     const codemods = await createCodeMods(fs, logger, app)
 
     await presetLucid(codemods, app, { dialect: 'mysql', installPackages: false })
@@ -130,8 +130,8 @@ test.group('Preset | Lucid', (group) => {
     await createSetupFiles(fs)
     await createEnvFile(fs)
 
-    const logger = cliui({ mode: 'normal' }).logger
     const app = await createApp(fs)
+    const logger = new Kernel(app).ui.logger
     const codemods = await createCodeMods(fs, logger, app)
 
     await presetLucid(codemods, app, { dialect: 'mssql', installPackages: false })
@@ -185,8 +185,8 @@ test.group('Preset | Lucid', (group) => {
     await createSetupFiles(fs)
     await createEnvFile(fs)
 
-    const logger = cliui({ mode: 'normal' }).logger
     const app = await createApp(fs)
+    const logger = new Kernel(app).ui.logger
     const codemods = await createCodeMods(fs, logger, app)
 
     await presetLucid(codemods, app, { dialect: 'sqlite', installPackages: false })
@@ -225,8 +225,8 @@ test.group('Preset | Lucid', (group) => {
     await createSetupFiles(fs)
     await createEnvFile(fs)
 
-    const logger = cliui({ mode: 'normal' }).logger
     const app = await createApp(fs)
+    const logger = new Kernel(app).ui.logger
     const codemods = await createCodeMods(fs, logger, app)
 
     await presetLucid(codemods, app, { dialect: 'postgres', installPackages: true })
