@@ -33,7 +33,7 @@
     "@commitlint/cli": "^18.4.3",
     "@commitlint/config-conventional": "^18.4.3",
     "@japa/assert": "^2.0.0-2",
-    "@japa/file-system": "^2.1.0",
+    "@japa/file-system": "^2.1.1",
     "@japa/runner": "^3.0.0-9",
     "@japa/snapshot": "^2.0.0-2",
     "@poppinss/cliui": "^6.2.3",
