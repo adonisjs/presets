@@ -23,7 +23,7 @@
     "build": "npm run compile",
     "release": "np",
     "version": "npm run build",
-    "sync-labels": "github-label-sync --labels .github/labels.json adonisjs/assembler",
+    "sync-labels": "github-label-sync --labels .github/labels.json adonisjs/presets",
     "format": "prettier --write .",
     "prepublishOnly": "npm run build",
     "quick:test": "node --loader ts-node/esm --enable-source-maps bin/test.ts"
@@ -45,6 +45,7 @@
     "c8": "^8.0.1",
     "dedent": "^1.5.1",
     "del-cli": "^5.1.0",
+    "github-label-sync": "^2.3.1",
     "husky": "^8.0.3",
     "np": "^9.2.0",
     "ts-node": "^10.9.2",
