@@ -25,6 +25,7 @@ test.group('Preset | Lucid', (group) => {
     const codemods = await createCodeMods(fs, logger, app)
 
     await presetLucid(codemods, app, { dialect: 'postgres', installPackages: false })
+    console.log(await fs.contents('.env'))
 
     await assert.fileEquals(
       'config/database.ts',
@@ -80,6 +81,7 @@ test.group('Preset | Lucid', (group) => {
     const codemods = await createCodeMods(fs, logger, app)
 
     await presetLucid(codemods, app, { dialect: 'mysql', installPackages: false })
+    console.log(await fs.contents('.env'))
 
     await assert.fileEquals(
       'config/database.ts',
