@@ -70,7 +70,7 @@ export async function presetAuth(
    * Register provider to the rcfile
    */
   await codemods.updateRcFile((rcFile) => {
-    rcFile.addCommand('@adonisjs/auth/auth_provider')
+    rcFile.addProvider('@adonisjs/auth/auth_provider')
   })
 
   /**
