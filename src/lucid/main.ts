@@ -137,7 +137,7 @@ export async function presetLucid(
    * needs them
    */
   if (envVars) {
-    codemods.defineEnvVariables(envVars)
+    await codemods.defineEnvVariables(envVars)
   }
 
   /**
@@ -145,7 +145,7 @@ export async function presetLucid(
    * dialect config needs them
    */
   if (envValidations) {
-    codemods.defineEnvValidations({
+    await codemods.defineEnvValidations({
       variables: envValidations,
       leadingComment: 'Variables for configuring database connection',
     })
@@ -157,6 +157,6 @@ export async function presetLucid(
   if (options.installPackages) {
     await codemods.installPackages(packagesToInstall)
   } else {
-    codemods.listPackagesToInstall(packagesToInstall)
+    await codemods.listPackagesToInstall(packagesToInstall)
   }
 }
