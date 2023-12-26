@@ -27,6 +27,9 @@ test.group('Preset | Auth', (group) => {
 
     await presetAuth(codemods, app, { guard: 'session', userProvider: 'lucid' })
     await assert.fileContains('adonisrc.ts', ['@adonisjs/auth/auth_provider'])
+    await assert.fileExists('app/middleware/auth_middleware.ts')
+    await assert.fileExists('app/middleware/guest_middleware.ts')
+
     await assert.fileContains('start/kernel.ts', [
       `() => import('@adonisjs/auth/initialize_auth_middleware')`,
       `auth: () => import('#middleware/auth_middleware')`,

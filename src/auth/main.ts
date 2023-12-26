@@ -25,7 +25,7 @@ export async function presetAuth(
     userProvider: 'lucid' | 'database'
   }
 ) {
-  const configStub = `${options.guard}_with_${options.userProvider}.stub`
+  const configStub = `config/${options.guard}_with_${options.userProvider}.stub`
 
   /**
    * Publish config file
@@ -35,7 +35,7 @@ export async function presetAuth(
   /**
    * Publish migration file
    */
-  await codemods.makeUsingStub(STUBS_ROOT, 'users_table_migration.stub', {
+  await codemods.makeUsingStub(STUBS_ROOT, 'make/migration/users.stub', {
     entity: app.generators.createEntity('users'),
     migration: {
       folder: 'database/migrations',
@@ -45,13 +45,23 @@ export async function presetAuth(
   })
 
   /**
+   * Publish middleware
+   */
+  await codemods.makeUsingStub(STUBS_ROOT, 'make/middleware/auth.stub', {
+    entity: app.generators.createEntity('auth'),
+  })
+  await codemods.makeUsingStub(STUBS_ROOT, 'make/middleware/guest.stub', {
+    entity: app.generators.createEntity('guest'),
+  })
+
+  /**
    * Create model only when using the lucid provider
    */
   if (options.userProvider === 'lucid') {
     /**
      * Publish model
      */
-    await codemods.makeUsingStub(STUBS_ROOT, 'user_model.stub', {
+    await codemods.makeUsingStub(STUBS_ROOT, 'make/model/user.stub', {
       entity: app.generators.createEntity('users'),
     })
   }
