@@ -8,6 +8,7 @@
  */
 
 import { joinToURL } from '@poppinss/utils'
+import type { Application } from '@adonisjs/core/app'
 import type { Codemods } from '@adonisjs/core/ace/codemods'
 
 const STUBS_ROOT = joinToURL(import.meta.url, './stubs')
@@ -18,6 +19,7 @@ const STUBS_ROOT = joinToURL(import.meta.url, './stubs')
  */
 export async function presetAuth(
   codemods: Codemods,
+  app: Application<any>,
   options: {
     guard: 'session'
     userProvider: 'lucid' | 'database'
@@ -29,6 +31,30 @@ export async function presetAuth(
    * Publish config file
    */
   await codemods.makeUsingStub(STUBS_ROOT, configStub, {})
+
+  /**
+   * Publish migration file
+   */
+  await codemods.makeUsingStub(STUBS_ROOT, 'users_table_migration.stub', {
+    entity: app.generators.createEntity('users'),
+    migration: {
+      folder: 'database/migrations',
+      tableName: 'users',
+      fileName: `${new Date().getTime()}_create_users_table.ts`,
+    },
+  })
+
+  /**
+   * Create model only when using the lucid provider
+   */
+  if (options.userProvider === 'lucid') {
+    /**
+     * Publish model
+     */
+    await codemods.makeUsingStub(STUBS_ROOT, 'user_model.stub', {
+      entity: app.generators.createEntity('users'),
+    })
+  }
 
   /**
    * Register provider to the rcfile

@@ -43,7 +43,7 @@ const codemods = new Codemods(app, cliLogger)
 /**
  * Apply preset
  */
-await presetAuth(codemods, {
+await presetAuth(codemods, app, {
   guard: 'session',
   userProvider: 'lucid',
 })

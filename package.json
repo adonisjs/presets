@@ -51,6 +51,7 @@
     "github-label-sync": "^2.3.1",
     "husky": "^8.0.3",
     "np": "^9.2.0",
+    "timekeeper": "^2.3.1",
     "ts-node": "^10.9.2",
     "tsup": "^8.0.1",
     "typescript": "^5.3.3"
