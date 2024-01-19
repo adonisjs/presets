@@ -1,19 +1,16 @@
 {{{
   exports({ to: app.configPath('auth.ts') })
 }}}
-import { defineConfig, providers } from '@adonisjs/auth'
-import { sessionGuard } from '@adonisjs/auth/session'
+import { defineConfig } from '@adonisjs/auth'
 import { InferAuthEvents, Authenticators } from '@adonisjs/auth/types'
+import { tokensGuard, tokensUserProvider } from '@adonisjs/auth/access_tokens'
 
 const authConfig = defineConfig({
-  default: 'web',
+  default: 'api',
   guards: {
-    web: sessionGuard({
-      provider: providers.db({
-        table: 'users',
-        id: 'id',
-        passwordColumnName: 'password',
-        uids: ['email']
+    api: tokensGuard({
+      provider: tokensUserProvider({
+        model: () => import('#models/user')
       }),
     }),
   },

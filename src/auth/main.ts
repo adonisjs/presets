@@ -21,16 +21,24 @@ export async function presetAuth(
   codemods: Codemods,
   app: Application<any>,
   options: {
-    guard: 'session'
-    userProvider: 'lucid' | 'database'
+    guard: 'session' | 'access_tokens'
+    userProvider: 'lucid'
   }
 ) {
   const configStub = `config/${options.guard}_with_${options.userProvider}.stub`
+  const modelStub = `make/model/user_with_${options.guard}.stub`
 
   /**
    * Publish config file
    */
   await codemods.makeUsingStub(STUBS_ROOT, configStub, {})
+
+  /**
+   * Register provider to the rcfile
+   */
+  await codemods.updateRcFile((rcFile) => {
+    rcFile.addProvider('@adonisjs/auth/auth_provider')
+  })
 
   /**
    * Publish migration file
@@ -45,33 +53,28 @@ export async function presetAuth(
   })
 
   /**
-   * Publish middleware
+   * Create model
+   */
+  await codemods.makeUsingStub(STUBS_ROOT, modelStub, {
+    entity: app.generators.createEntity('users'),
+  })
+
+  /**
+   * Publish auth middleware
    */
   await codemods.makeUsingStub(STUBS_ROOT, 'make/middleware/auth.stub', {
     entity: app.generators.createEntity('auth'),
   })
-  await codemods.makeUsingStub(STUBS_ROOT, 'make/middleware/guest.stub', {
-    entity: app.generators.createEntity('guest'),
-  })
 
   /**
-   * Create model only when using the lucid provider
+   * Publish guest middleware only when using the session
+   * guard
    */
-  if (options.userProvider === 'lucid') {
-    /**
-     * Publish model
-     */
-    await codemods.makeUsingStub(STUBS_ROOT, 'make/model/user.stub', {
-      entity: app.generators.createEntity('users'),
+  if (options.guard === 'session') {
+    await codemods.makeUsingStub(STUBS_ROOT, 'make/middleware/guest.stub', {
+      entity: app.generators.createEntity('guest'),
     })
   }
-
-  /**
-   * Register provider to the rcfile
-   */
-  await codemods.updateRcFile((rcFile) => {
-    rcFile.addProvider('@adonisjs/auth/auth_provider')
-  })
 
   /**
    * Register middleware
@@ -86,9 +89,13 @@ export async function presetAuth(
       name: 'auth',
       path: '#middleware/auth_middleware',
     },
-    {
-      name: 'guest',
-      path: '#middleware/guest_middleware',
-    },
+    ...(options.guard === 'session'
+      ? [
+          {
+            name: 'guest',
+            path: '#middleware/guest_middleware',
+          },
+        ]
+      : []),
   ])
 }
