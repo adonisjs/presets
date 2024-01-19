@@ -113,7 +113,7 @@ export async function presetLucid(
   /**
    * Publish config file
    */
-  await codemods.makeUsingStub(STUBS_ROOT, 'config.stub', { dialect: options.dialect })
+  await codemods.makeUsingStub(STUBS_ROOT, `config/database/${options.dialect}.stub`, {})
 
   /**
    * Create the "tmp" directory when using sqlite
