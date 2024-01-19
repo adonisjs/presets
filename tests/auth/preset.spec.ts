@@ -7,8 +7,6 @@
  * file that was distributed with this source code.
  */
 
-import dedent from 'dedent'
-import timekeeper from 'timekeeper'
 import { test } from '@japa/runner'
 import { Kernel } from '@adonisjs/core/ace'
 import { presetAuth } from '../../src/auth/main.js'
