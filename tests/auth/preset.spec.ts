@@ -60,10 +60,8 @@ test.group('Preset | Auth | access tokens', (group) => {
       `() => import('@adonisjs/auth/initialize_auth_middleware')`,
       `auth: () => import('#middleware/auth_middleware')`,
     ])
-
-    const kernelFileContents = await fs.contents('start/kernel.ts')
-    assert.isFalse(
-      kernelFileContents.includes(`guest: () => import('#middleware/guest_middleware')`)
-    )
+    await assert.fileNotContains('start/kernel.ts', [
+      `guest: () => import('#middleware/guest_middleware')`,
+    ])
   })
 })
