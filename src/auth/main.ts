@@ -47,10 +47,23 @@ export async function presetAuth(
     entity: app.generators.createEntity('users'),
     migration: {
       folder: 'database/migrations',
-      tableName: 'users',
       fileName: `${new Date().getTime()}_create_users_table.ts`,
     },
   })
+
+  /**
+   * Publish access tokens migration file when selected
+   * access tokens guard
+   */
+  if (options.guard === 'access_tokens') {
+    await codemods.makeUsingStub(STUBS_ROOT, 'make/migration/access_tokens.stub', {
+      entity: app.generators.createEntity('access_tokens'),
+      migration: {
+        folder: 'database/migrations',
+        fileName: `${new Date().getTime()}_create_access_tokens_table.ts`,
+      },
+    })
+  }
 
   /**
    * Create model

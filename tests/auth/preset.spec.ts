@@ -7,6 +7,7 @@
  * file that was distributed with this source code.
  */
 
+import timekeeper from 'timekeeper'
 import { test } from '@japa/runner'
 import { Kernel } from '@adonisjs/core/ace'
 import { presetAuth } from '../../src/auth/main.js'
@@ -16,6 +17,8 @@ test.group('Preset | Auth | session', (group) => {
   group.each.disableTimeout()
 
   test('publish stubs and register provider and middleware', async ({ fs, assert }) => {
+    timekeeper.freeze()
+
     await createSetupFiles(fs)
     await createKernelFile(fs)
 
@@ -28,6 +31,10 @@ test.group('Preset | Auth | session', (group) => {
     await assert.fileExists('app/middleware/auth_middleware.ts')
     await assert.fileExists('app/middleware/guest_middleware.ts')
     await assert.fileExists('app/models/user.ts')
+    await assert.fileNotExists(
+      `database/migrations/${new Date().getTime()}_create_access_tokens_table.ts`
+    )
+    await assert.fileExists(`database/migrations/${new Date().getTime()}_create_users_table.ts`)
 
     await assert.fileContains('start/kernel.ts', [
       `() => import('@adonisjs/auth/initialize_auth_middleware')`,
@@ -53,6 +60,10 @@ test.group('Preset | Auth | access tokens', (group) => {
     await assert.fileExists('app/middleware/auth_middleware.ts')
     await assert.fileNotExists('app/middleware/guest_middleware.ts')
     await assert.fileExists('app/models/user.ts')
+    await assert.fileExists(`database/migrations/${new Date().getTime()}_create_users_table.ts`)
+    await assert.fileExists(
+      `database/migrations/${new Date().getTime()}_create_access_tokens_table.ts`
+    )
     await assert.fileContains('app/models/user.ts', [
       `static accessTokens = DbAccessTokensProvider.forModel(User)`,
     ])
