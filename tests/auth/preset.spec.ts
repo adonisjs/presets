@@ -76,3 +76,34 @@ test.group('Preset | Auth | access tokens', (group) => {
     ])
   })
 })
+
+test.group('Preset | Auth | basicAuth', (group) => {
+  group.each.disableTimeout()
+
+  test('publish stubs and register provider and middleware', async ({ fs, assert }) => {
+    timekeeper.freeze()
+
+    await createSetupFiles(fs)
+    await createKernelFile(fs)
+
+    const app = await createApp(fs)
+    const logger = new Kernel(app).ui.logger
+    const codemods = await createCodeMods(fs, logger, app)
+
+    await presetAuth(codemods, app, { guard: 'basic_auth', userProvider: 'lucid' })
+    await assert.fileContains('adonisrc.ts', ['@adonisjs/auth/auth_provider'])
+    await assert.fileExists('config/auth.ts')
+    await assert.fileExists('app/middleware/auth_middleware.ts')
+    await assert.fileExists('app/models/user.ts')
+    await assert.fileNotExists('app/middleware/guest_middleware.ts')
+    await assert.fileNotExists(
+      `database/migrations/${new Date().getTime()}_create_access_tokens_table.ts`
+    )
+    await assert.fileExists(`database/migrations/${new Date().getTime()}_create_users_table.ts`)
+
+    await assert.fileContains('start/kernel.ts', [
+      `() => import('@adonisjs/auth/initialize_auth_middleware')`,
+      `auth: () => import('#middleware/auth_middleware')`,
+    ])
+  })
+})

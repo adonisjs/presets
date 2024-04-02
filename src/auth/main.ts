@@ -21,7 +21,7 @@ export async function presetAuth(
   codemods: Codemods,
   app: Application<any>,
   options: {
-    guard: 'session' | 'access_tokens'
+    guard: 'session' | 'access_tokens' | 'basic_auth'
     userProvider: 'lucid'
   }
 ) {
