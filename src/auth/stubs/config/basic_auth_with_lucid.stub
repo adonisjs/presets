@@ -2,8 +2,8 @@
   exports({ to: app.configPath('auth.ts') })
 }}}
 import { defineConfig } from '@adonisjs/auth'
-import { InferAuthEvents, Authenticators } from '@adonisjs/auth/types'
 import { basicAuthGuard, basicAuthUserProvider } from '@adonisjs/auth/basic_auth'
+import type { InferAuthEvents, Authenticators } from '@adonisjs/auth/types'
 
 const authConfig = defineConfig({
   default: 'basicAuth',
