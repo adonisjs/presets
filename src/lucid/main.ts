@@ -18,7 +18,7 @@ const STUBS_ROOT = joinToURL(import.meta.url, './stubs')
  * Collection of dialects that can be configured
  */
 export const DIALECTS: {
-  [K in 'sqlite' | 'mysql' | 'postgres' | 'mssql']: {
+  [K in 'sqlite' | 'mysql' | 'libsql' | 'postgres' | 'mssql']: {
     envVars?: Record<string, number | string>
     envValidations?: Record<string, string>
     name: string
@@ -28,6 +28,10 @@ export const DIALECTS: {
   sqlite: {
     name: 'SQLite',
     pkg: 'better-sqlite3',
+  },
+  libsql: {
+    name: 'LibSQL',
+    pkg: 'libsql',
   },
   mysql: {
     name: 'MySQL',
@@ -116,9 +120,9 @@ export async function presetLucid(
   await codemods.makeUsingStub(STUBS_ROOT, `config/database/${options.dialect}.stub`, {})
 
   /**
-   * Create the "tmp" directory when using sqlite
+   * Create the "tmp" directory when using sqlite or libsql
    */
-  if (options.dialect === 'sqlite') {
+  if (['sqlite', 'libsql'].includes(options.dialect)) {
     try {
       await mkdir(app.tmpPath(), { recursive: true })
     } catch {}

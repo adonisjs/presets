@@ -221,6 +221,46 @@ test.group('Preset | Lucid', (group) => {
     await assert.fileEquals('start/env.ts', 'export default Env.create(import.meta.url, {})')
   })
 
+  test('configure libsql dialect', async ({ fs, assert }) => {
+    await createSetupFiles(fs)
+    await createEnvFile(fs)
+
+    const app = await createApp(fs)
+    const logger = new Kernel(app).ui.logger
+    const codemods = await createCodeMods(fs, logger, app)
+
+    await presetLucid(codemods, app, { dialect: 'libsql', installPackages: false })
+
+    await assert.fileEquals(
+      'config/database.ts',
+      dedent`import app from '@adonisjs/core/services/app'
+    import { defineConfig } from '@adonisjs/lucid'
+
+    const dbConfig = defineConfig({
+      connection: 'libsql',
+      connections: {
+        libsql: {
+          client: 'libsql',
+          connection: {
+            filename: \`file:\${app.tmpPath('libsql.db')}\`
+          },
+          useNullAsDefault: true,
+          migrations: {
+            naturalSort: true,
+            paths: ['database/migrations'],
+          },
+        },
+      },
+    })
+
+    export default dbConfig`
+    )
+
+    await assert.dirExists('tmp')
+    await assert.fileEquals('.env', '')
+    await assert.fileEquals('start/env.ts', 'export default Env.create(import.meta.url, {})')
+  })
+
   test('install packages', async ({ fs, assert }) => {
     await createSetupFiles(fs)
     await createEnvFile(fs)
