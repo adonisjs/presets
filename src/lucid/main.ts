@@ -31,7 +31,7 @@ export const DIALECTS: {
   },
   libsql: {
     name: 'LibSQL',
-    pkg: 'libsql',
+    pkg: '@libsql/sqlite3',
   },
   mysql: {
     name: 'MySQL',
