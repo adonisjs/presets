@@ -14,6 +14,24 @@ import type { Codemods } from '@adonisjs/core/ace/codemods'
 const STUBS_ROOT = joinToURL(import.meta.url, './stubs')
 
 /**
+ * Collection of configurable guards
+ */
+export const GUARDS = {
+  session: {
+    name: 'Session',
+    description: 'Authenticate users using cookies and session',
+  },
+  access_tokens: {
+    name: 'Access Token',
+    description: 'Authenticate clients using API tokens',
+  },
+  basic_auth: {
+    name: 'Basic Auth',
+    description: 'Authenticate users using HTTP Basic Auth',
+  },
+}
+
+/**
  * Configures the "@adonisjs/auth" package with one of the
  * bundled guards and user providers
  */
@@ -21,7 +39,7 @@ export async function presetAuth(
   codemods: Codemods,
   app: Application<any>,
   options: {
-    guard: 'session' | 'access_tokens' | 'basic_auth'
+    guard: keyof typeof GUARDS
     userProvider: 'lucid'
   }
 ) {
