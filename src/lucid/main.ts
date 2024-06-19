@@ -22,20 +22,20 @@ export const DIALECTS: {
     envVars?: Record<string, number | string>
     envValidations?: Record<string, string>
     name: string
-    pkg: string
+    pkg: string[]
   }
 } = {
   sqlite: {
     name: 'SQLite',
-    pkg: 'better-sqlite3',
+    pkg: ['better-sqlite3'],
   },
   libsql: {
     name: 'LibSQL',
-    pkg: '@libsql/sqlite3',
+    pkg: ['@libsql/sqlite3', 'sqlite3'],
   },
   mysql: {
     name: 'MySQL',
-    pkg: 'mysql2',
+    pkg: ['mysql2'],
     envVars: {
       DB_HOST: '127.0.0.1',
       DB_PORT: 3306,
@@ -53,7 +53,7 @@ export const DIALECTS: {
   },
   postgres: {
     name: 'PostgreSQL',
-    pkg: 'pg',
+    pkg: ['pg'],
     envVars: {
       DB_HOST: '127.0.0.1',
       DB_PORT: 5432,
@@ -71,7 +71,7 @@ export const DIALECTS: {
   },
   mssql: {
     name: 'MS SQL',
-    pkg: 'tedious',
+    pkg: ['tedious'],
     envVars: {
       DB_HOST: '127.0.0.1',
       DB_PORT: 1433,
@@ -108,8 +108,13 @@ export async function presetLucid(
   }
 ) {
   const { pkg, envVars, envValidations } = DIALECTS[options.dialect]
-  const packagesToInstall = [
-    { name: pkg, isDevDependency: false },
+  const packagesToInstall: { name: string; isDevDependency: boolean }[] = [
+    ...pkg.map((name) => {
+      return {
+        name,
+        isDevDependency: false,
+      }
+    }),
     { name: 'luxon', isDevDependency: false },
     { name: '@types/luxon', isDevDependency: true },
   ]
