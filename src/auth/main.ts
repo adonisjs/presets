@@ -98,12 +98,16 @@ export async function presetAuth(
   })
 
   /**
-   * Publish guest middleware only when using the session
+   * Publish guest & silent_auth middleware only when using the session
    * guard
    */
   if (options.guard === 'session') {
     await codemods.makeUsingStub(STUBS_ROOT, 'make/middleware/guest.stub', {
       entity: app.generators.createEntity('guest'),
+    })
+
+    await codemods.makeUsingStub(STUBS_ROOT, 'make/middleware/silent_auth.stub', {
+      entity: app.generators.createEntity('silent_auth'),
     })
   }
 
