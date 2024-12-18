@@ -3,7 +3,7 @@
 }}}
 import { defineConfig } from '@adonisjs/auth'
 import { basicAuthGuard, basicAuthUserProvider } from '@adonisjs/auth/basic_auth'
-import type { InferAuthEvents, Authenticators } from '@adonisjs/auth/types'
+import type { InferAuthenticators, InferAuthEvents, Authenticators } from '@adonisjs/auth/types'
 
 const authConfig = defineConfig({
   default: 'basicAuth',
