@@ -7,12 +7,12 @@
  * file that was distributed with this source code.
  */
 
+import { join } from 'node:path'
 import { mkdir } from 'node:fs/promises'
-import { joinToURL } from '@poppinss/utils'
 import type { Application } from '@adonisjs/core/app'
 import type { Codemods } from '@adonisjs/core/ace/codemods'
 
-const STUBS_ROOT = joinToURL(import.meta.url, './stubs')
+const STUBS_ROOT = join(import.meta.dirname, './stubs')
 
 /**
  * Collection of dialects that can be configured

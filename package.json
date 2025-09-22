@@ -56,9 +56,6 @@
     "tsup": "^8.5.0",
     "typescript": "^5.9.2"
   },
-  "dependencies": {
-    "@poppinss/utils": "^6.10.1"
-  },
   "peerDependencies": {
     "@adonisjs/assembler": "^8.0.0-next.9",
     "@adonisjs/core": "^7.0.0-next.1"
