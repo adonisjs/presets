@@ -1,6 +1,6 @@
 {
   "name": "@adonisjs/presets",
-  "version": "2.6.4",
+  "version": "3.0.0-next.0",
   "description": "A collection of presets to configure AdonisJS packages",
   "type": "module",
   "files": [
