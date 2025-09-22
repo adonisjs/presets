@@ -8,11 +8,11 @@
  */
 
 import dedent from 'dedent'
-import { FileSystem } from '@japa/file-system'
+import { type FileSystem } from '@japa/file-system'
 import { Codemods } from '@adonisjs/core/ace/codemods'
-import { UIPrimitives } from '@adonisjs/core/types/ace'
+import { type UIPrimitives } from '@adonisjs/core/types/ace'
 import { AppFactory } from '@adonisjs/core/factories/app'
-import { ApplicationService } from '@adonisjs/core/types'
+import { type ApplicationService } from '@adonisjs/core/types'
 
 /**
  * Creates the setup files for codemods to work
